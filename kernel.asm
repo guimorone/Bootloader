@@ -1,6 +1,11 @@
 org 0x7c00
 jmp 0x0000:start
 
+BALA1_X dw 100
+BALA1_Y dw 100
+BALA_SIZE_X dw 07h
+BALA_SIZE_Y dw 03h
+BALA_VELX dw 05h
 BALL_X dw 0Ah
 BALL_Y dw 0Ah
 BALL_SIZE dw 09h
@@ -12,20 +17,66 @@ timer:
     ;mov ah, 2Ch
     ;int 21h
 
-    ;mov cx, 0             ;delay
-    ;mov dx, 20000             ;delay 
-    ;mov ah, 86h           ;delay
-    ;int 15h               ;delay
+    mov cx, 0             ;delay
+    mov dx, 30000             ;delay 
+    mov ah, 86h           ;delay
+    int 15h               ;delay
 
-    ;call clear_screen
+    mov ah, 0Ch
+    int 21h
+
+    call clear_screen
+
+    call mover_bala
+
+    call draw_bala
 
     call wait_char
 
-    ;call mover_ponde
+    call mover_ponde
 
-    ;call draw_ball
+    mov ah, 0Ch
+    int 21h
+
+    call draw_ball
 
     jmp timer
+
+    ret
+
+draw_bala:
+    mov cx, [BALA1_X]
+    mov dx, [BALA1_Y]
+
+    call draw_bala_loop
+
+    ret
+
+draw_bala_loop:
+    xor ax, ax
+    mov ah, 0Ch
+    mov al, 0Fh
+    mov bh, 00h
+    int 10h
+
+    inc cx
+    mov ax, cx
+    sub ax, [BALA1_X]
+    cmp ax, [BALA_SIZE_X]
+    jng draw_bala_loop
+
+    mov cx, [BALA1_X]
+    inc dx
+    mov ax, dx
+    sub ax, [BALA1_Y]
+    cmp ax, [BALA_SIZE_Y]
+    jng draw_bala_loop
+
+    ret
+
+mover_bala:
+    mov ax, [BALA_VELX]
+    sub [BALA1_X], ax
 
     ret
 
@@ -45,8 +96,6 @@ wait_char:
 get_char:
     mov ah, 00h
     int 16h
-
-    call mover_ponde
 
     ret
 
@@ -69,15 +118,11 @@ move_ball_down:
     mov ax, [BALL_VELY]
     add [BALL_Y], ax
 
-    call draw_ball
-
     ret
 
 move_ball_up:
     mov ax, [BALL_VELY]
     sub [BALL_Y], ax
-
-    call draw_ball
 
     ret
 
@@ -85,15 +130,11 @@ move_ball_right:
     mov ax, [BALL_VELX]
     add [BALL_X], ax
 
-    call draw_ball
-
     ret
     
 move_ball_left:
     mov ax, [BALL_VELX]
     sub [BALL_X], ax
-
-    call draw_ball
 
     ret
 
@@ -113,7 +154,6 @@ draw_ball:
     mov cx, [BALL_X]
     mov dx, [BALL_Y]
 
-    call clear_screen
     call draw_ball_loop
     
     ret
@@ -143,8 +183,6 @@ draw_ball_loop:
 start:
 
     call clear_screen
-
-    call draw_ball
     
     call timer
 
