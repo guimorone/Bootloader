@@ -144,25 +144,58 @@ move_ball_down:
     mov ax, [BALL_VELY]
     add [BALL_Y], ax
 
-    ret
+    mov ax, 198
+    sub ax, [BALL_SIZE]
+    cmp [BALL_Y], ax
+    jng .finished
+    mov ax, 198
+    sub ax, [BALL_SIZE]
+    mov [BALL_Y], ax
+
+    .finished:
+        ret
 
 move_ball_up:
     mov ax, [BALL_VELY]
     sub [BALL_Y], ax
 
-    ret
+    mov ax, 0
+    cmp [BALL_Y], ax
+    jg .finished
+    mov ax, 0
+    mov [BALL_Y], ax
+
+    .finished:
+        ret
 
 move_ball_right:
     mov ax, [BALL_VELX]
     add [BALL_X], ax
 
-    ret
+    mov ax, 318
+    sub ax, [BALL_SIZE]
+    cmp [BALL_X], ax
+    jng .finished
+    mov ax, 318
+    sub ax, [BALL_SIZE]
+    mov [BALL_X], ax
+
+    .finished:
+        ret
     
 move_ball_left:
     mov ax, [BALL_VELX]
     sub [BALL_X], ax
 
-    ret
+
+    mov ax, 0
+    cmp [BALL_X], ax
+    jg .finished
+    mov ax, 0
+    mov [BALL_X], ax
+
+    .finished:
+        ret
 
 clear_screen:
     mov ah, 00h
