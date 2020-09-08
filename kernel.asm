@@ -29,18 +29,6 @@ timer:
     call clear_screen
 
 
-    mov bh,0
-    mov dh,0
-    mov dl,0
-    mov ah,02h
-    int 10h
-    mov al, 'a'
-    call print_char
-
-    mov ah,6
-    mov dl,'d'
-    int 21h
-
     call mover_bala
 
     call draw_bala
@@ -65,24 +53,24 @@ compara_pos_X:
     mov ax, [BALL_X]
     add ax, [BALL_SIZE]
     cmp ax, [BALA1_X]
-    jng .compara_pos_X2
+    jg .compara_pos_X2
     ret
     .compara_pos_X2:
     mov ax, [BALL_X]
     cmp ax, [BALA1_X]
-    jg compara_pos_Y
+    jng compara_pos_Y
     ret
 
 compara_pos_Y:
     mov ax, [BALL_Y]
     add ax, [BALL_SIZE]
     cmp ax, [BALA1_Y]
-    jng .compara_pos_Y2
+    jg .compara_pos_Y2
     ret
     .compara_pos_Y2:
     mov ax, [BALL_Y]
     cmp ax, [BALA1_Y]
-    jng .no_colision
+    jg .no_colision
     mov byte [VAR_COLISAO], 1
 
     .no_colision:
@@ -270,7 +258,7 @@ start:
     call clear_screen
     
     call timer
-
+    dale:
     call clear_screen
 
     ret
