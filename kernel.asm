@@ -17,15 +17,13 @@ timer:
     ;mov ah, 86h           ;delay
     ;int 15h               ;delay
 
-    call clear_screen
+    ;call clear_screen
 
     call wait_char
 
-    call print_char
+    ;call mover_ponde
 
-    call mover_ponde
-
-    call draw_ball
+    ;call draw_ball
 
     jmp timer
 
@@ -48,6 +46,8 @@ get_char:
     mov ah, 00h
     int 16h
 
+    call mover_ponde
+
     ret
 
 mover_ponde:
@@ -69,11 +69,15 @@ move_ball_down:
     mov ax, [BALL_VELY]
     add [BALL_Y], ax
 
+    call draw_ball
+
     ret
 
 move_ball_up:
     mov ax, [BALL_VELY]
     sub [BALL_Y], ax
+
+    call draw_ball
 
     ret
 
@@ -81,11 +85,15 @@ move_ball_right:
     mov ax, [BALL_VELX]
     add [BALL_X], ax
 
+    call draw_ball
+
     ret
     
 move_ball_left:
     mov ax, [BALL_VELX]
     sub [BALL_X], ax
+
+    call draw_ball
 
     ret
 
@@ -105,6 +113,7 @@ draw_ball:
     mov cx, [BALL_X]
     mov dx, [BALL_Y]
 
+    call clear_screen
     call draw_ball_loop
     
     ret
@@ -134,11 +143,10 @@ draw_ball_loop:
 start:
 
     call clear_screen
+
+    call draw_ball
     
     call timer
-    
-
-
 
 
 
