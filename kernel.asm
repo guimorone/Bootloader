@@ -18,7 +18,7 @@ timer:
     ;int 21h
 
     mov cx, 0             ;delay
-    mov dx, 30000             ;delay 
+    mov dx, 30000         ;delay 
     mov ah, 86h           ;delay
     int 15h               ;delay
 
@@ -40,9 +40,23 @@ timer:
 
     call draw_ball
 
+    call compara_pos_X
+
     jmp timer
 
     ret
+
+compara_pos_X:
+    mov ax, [BALL_X]
+    cmp ax, [BALA1_X]
+    ;je compara_pos_Y
+
+    ret
+
+;compara_pos_Y:
+ ;   mov ax, [BALL_Y]
+  ;  cmp ax, [BALA1_Y]
+   ; je 
 
 draw_bala:
     mov cx, [BALA1_X]
