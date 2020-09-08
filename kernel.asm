@@ -1,4 +1,4 @@
-org 0x7c00
+org 0x7e00
 jmp 0x0000:start
 
 BALA1_X dw 100
@@ -12,6 +12,7 @@ BALL_SIZE dw 09h
 BALL_VELX dw 05h
 BALL_VELY dw 05h
 TIME db 0
+VAR_COLISAO db 0
 
 timer:
     ;mov ah, 2Ch
@@ -42,21 +43,26 @@ timer:
 
     call compara_pos_X
 
-    jmp timer
+    cmp byte [VAR_COLISAO], 0
+    je timer
 
     ret
 
 compara_pos_X:
     mov ax, [BALL_X]
     cmp ax, [BALA1_X]
-    ;je compara_pos_Y
+    je compara_pos_Y
 
     ret
 
-;compara_pos_Y:
- ;   mov ax, [BALL_Y]
-  ;  cmp ax, [BALA1_Y]
-   ; je 
+compara_pos_Y:
+    mov ax, [BALL_Y]
+    cmp ax, [BALA1_Y]
+    jne timer
+
+    mov byte [VAR_COLISAO], 1
+
+    ret 
 
 draw_bala:
     mov cx, [BALA1_X]
@@ -91,8 +97,14 @@ draw_bala_loop:
 mover_bala:
     mov ax, [BALA_VELX]
     sub [BALA1_X], ax
+    mov ax, 0
+    cmp [BALA1_X], ax
+    jg .finished
+    mov ax, 330
+    mov [BALA1_X], ax
 
-    ret
+    .finished:
+        ret
 
 print_char:
     mov ah, 0xe
@@ -200,10 +212,8 @@ start:
     
     call timer
 
-
+    call clear_screen
 
     ret
 
-
-times 510 - ($ - $$) db 0
-dw 0xaa55
+jmp $ 
