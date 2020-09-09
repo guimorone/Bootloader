@@ -114,6 +114,12 @@ mover_bala:
     jg .finished
     mov ax, 330
     mov [BALA1_X], ax
+    mov ah,00h
+    int 1ah
+    mov ax,dx
+    mov bl,200
+    div bl
+    mov [BALA1_Y],ah
 
     .finished:
         ret
