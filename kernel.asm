@@ -3,6 +3,16 @@ jmp 0x0000:start
 
 BALA1_X dw 100
 BALA1_Y dw 100
+BALA2_X dw 150
+BALA2_Y dw 150
+BALA3_X dw 100
+BALA3_Y dw 100
+BALA4_X dw 100
+BALA4_Y dw 100
+BALA5_X dw 100
+BALA5_Y dw 100
+BALA_X dw 100
+BALA_Y dw 100
 BALA_SIZE_X dw 07h
 BALA_SIZE_Y dw 03h
 BALA_VELX dw 05h
@@ -28,10 +38,9 @@ timer:
 
     call clear_screen
 
+    call atribui_mover_bala
 
-    call mover_bala
-
-    call draw_bala
+    call atribui_draw_bala
 
     call wait_char
 
@@ -77,10 +86,53 @@ compara_pos_Y:
         ret 
 
 draw_bala:
+    mov ax,0
+    cmp [BALA1_X],ax
+    jng .naodesenha
+    mov ax,310
+    cmp [BALA1_X],ax
+    jg .naodesenha
     mov cx, [BALA1_X]
     mov dx, [BALA1_Y]
 
     call draw_bala_loop
+    .naodesenha:
+        ret
+
+atribui_draw_bala:
+    mov ax,[BALA1_X]
+    mov [BALA_X],ax
+    mov ax, [BALA1_Y]
+    mov [BALA_Y],ax
+
+    call draw_bala
+
+    ret
+
+atribui_mover_bala:
+    mov ax,[BALA1_X]
+    mov [BALA_X],ax
+    mov ax, [BALA1_Y]
+    mov [BALA_Y],ax
+
+    call mover_bala
+
+    mov ax,[BALA_X]
+    mov [BALA1_X],ax
+    mov ax, [BALA_Y]
+    mov [BALA1_Y],ax
+
+    mov ax,[BALA2_X]
+    mov [BALA_X],ax
+    mov ax, [BALA2_Y]
+    mov [BALA_Y],ax
+
+    call mover_bala
+
+    mov ax,[BALA_X]
+    mov [BALA2_X],ax
+    mov ax, [BALA_Y]
+    mov [BALA2_Y],ax
 
     ret
 
@@ -109,13 +161,12 @@ draw_bala_loop:
 mover_bala:
     mov ax, [BALA_VELX]
     sub [BALA1_X], ax
-    mov ax, 0
+    mov ax, -10
     cmp [BALA1_X], ax
     jg .finished
-    mov ax, 330
+    mov ax, 340
     mov [BALA1_X], ax
-    mov ah,00h
-    int 1ah
+    call get_system_time
     mov ax,dx
     mov bl,200
     div bl
@@ -124,6 +175,12 @@ mover_bala:
     .finished:
         ret
 
+
+get_system_time:
+    mov ah,00h
+    int 1ah
+
+    ret
 print_char:
     mov ah, 0eh
     int 10h
