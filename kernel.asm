@@ -5,12 +5,8 @@ BALA1_X dw 100
 BALA1_Y dw 100
 BALA2_X dw 150
 BALA2_Y dw 150
-BALA3_X dw 100
-BALA3_Y dw 100
-BALA4_X dw 100
-BALA4_Y dw 100
-BALA5_X dw 100
-BALA5_Y dw 100
+BALA3_X dw 200
+BALA3_Y dw 56
 BALA_X dw 100
 BALA_Y dw 100
 BALA_SIZE_X dw 07h
@@ -51,63 +47,13 @@ timer:
 
     call draw_ball
 
-    call compara_pos_X
+    call atribui_compara_colisao
 
     cmp byte [VAR_COLISAO], 0
     je timer
 
     ret
 
-compara_pos_X:
-    mov ax, [BALL_X]
-    add ax, [BALL_SIZE]
-    cmp ax, [BALA1_X]
-    jg .compara_pos_X2
-    ret
-    .compara_pos_X2:
-    mov ax, [BALL_X]
-    cmp ax, [BALA1_X]
-    jng compara_pos_Y
-    ret
-
-compara_pos_Y:
-    mov ax, [BALL_Y]
-    add ax, [BALL_SIZE]
-    cmp ax, [BALA1_Y]
-    jg .compara_pos_Y2
-    ret
-    .compara_pos_Y2:
-    mov ax, [BALL_Y]
-    cmp ax, [BALA1_Y]
-    jg .no_colision
-    mov byte [VAR_COLISAO], 1
-
-    .no_colision:
-        ret 
-
-draw_bala:
-    mov ax,0
-    cmp [BALA1_X],ax
-    jng .naodesenha
-    mov ax,310
-    cmp [BALA1_X],ax
-    jg .naodesenha
-    mov cx, [BALA1_X]
-    mov dx, [BALA1_Y]
-
-    call draw_bala_loop
-    .naodesenha:
-        ret
-
-atribui_draw_bala:
-    mov ax,[BALA1_X]
-    mov [BALA_X],ax
-    mov ax, [BALA1_Y]
-    mov [BALA_Y],ax
-
-    call draw_bala
-
-    ret
 
 atribui_mover_bala:
     mov ax,[BALA1_X]
@@ -134,7 +80,114 @@ atribui_mover_bala:
     mov ax, [BALA_Y]
     mov [BALA2_Y],ax
 
+    mov ax,[BALA3_X]
+    mov [BALA_X],ax
+    mov ax, [BALA3_Y]
+    mov [BALA_Y],ax
+
+    call mover_bala
+
+    mov ax,[BALA_X]
+    mov [BALA3_X],ax
+    mov ax, [BALA_Y]
+    mov [BALA3_Y],ax
+    
     ret
+
+atribui_draw_bala:
+    mov ax,[BALA1_X]
+    mov [BALA_X],ax
+    mov ax, [BALA1_Y]
+    mov [BALA_Y],ax
+
+    call draw_bala
+
+    mov ax,[BALA2_X]
+    mov [BALA_X],ax
+    mov ax, [BALA2_Y]
+    mov [BALA_Y],ax
+
+    call draw_bala
+
+    mov ax,[BALA3_X]
+    mov [BALA_X],ax
+    mov ax, [BALA3_Y]
+    mov [BALA_Y],ax
+
+    call draw_bala
+
+    ret
+atribui_compara_colisao:
+    mov ax,[BALA1_X]
+    mov [BALA_X],ax
+    mov ax, [BALA1_Y]
+    mov [BALA_Y],ax
+
+    call compara_pos_X
+    cmp byte [VAR_COLISAO], 1
+    je .finished
+
+    mov ax,[BALA2_X]
+    mov [BALA_X],ax
+    mov ax, [BALA2_Y]
+    mov [BALA_Y],ax
+
+    call compara_pos_X
+    cmp byte [VAR_COLISAO], 1
+    je .finished
+
+    mov ax,[BALA3_X]
+    mov [BALA_X],ax
+    mov ax, [BALA3_Y]
+    mov [BALA_Y],ax
+
+    call compara_pos_X
+    cmp byte [VAR_COLISAO], 1
+    je .finished
+
+    
+    .finished:
+        ret
+compara_pos_X:
+    mov ax, [BALL_X]
+    add ax, [BALL_SIZE]
+    cmp ax, [BALA_X]
+    jg .compara_pos_X2
+    ret
+    .compara_pos_X2:
+    mov ax, [BALL_X]
+    cmp ax, [BALA_X]
+    jng compara_pos_Y
+    ret
+
+compara_pos_Y:
+    mov ax, [BALL_Y]
+    add ax, [BALL_SIZE]
+    cmp ax, [BALA_Y]
+    jg .compara_pos_Y2
+    ret
+    .compara_pos_Y2:
+    mov ax, [BALL_Y]
+    cmp ax, [BALA_Y]
+    jg .no_colision
+    mov byte [VAR_COLISAO], 1
+
+    .no_colision:
+        ret 
+
+draw_bala:
+    mov ax,0
+    cmp [BALA_X],ax
+    jng .naodesenha
+    mov ax,310
+    cmp [BALA_X],ax
+    jg .naodesenha
+    mov cx, [BALA_X]
+    mov dx, [BALA_Y]
+
+    call draw_bala_loop
+    .naodesenha:
+        ret
 
 draw_bala_loop:
     xor ax, ax
@@ -145,14 +198,14 @@ draw_bala_loop:
 
     inc cx
     mov ax, cx
-    sub ax, [BALA1_X]
+    sub ax, [BALA_X]
     cmp ax, [BALA_SIZE_X]
     jng draw_bala_loop
 
-    mov cx, [BALA1_X]
+    mov cx, [BALA_X]
     inc dx
     mov ax, dx
-    sub ax, [BALA1_Y]
+    sub ax, [BALA_Y]
     cmp ax, [BALA_SIZE_Y]
     jng draw_bala_loop
 
@@ -160,17 +213,17 @@ draw_bala_loop:
 
 mover_bala:
     mov ax, [BALA_VELX]
-    sub [BALA1_X], ax
+    sub [BALA_X], ax
     mov ax, -10
-    cmp [BALA1_X], ax
+    cmp [BALA_X], ax
     jg .finished
     mov ax, 340
-    mov [BALA1_X], ax
+    mov [BALA_X], ax
     call get_system_time
     mov ax,dx
     mov bl,200
     div bl
-    mov [BALA1_Y],ah
+    mov [BALA_Y],ah
 
     .finished:
         ret
