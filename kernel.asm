@@ -1,7 +1,9 @@
 org 0x7e00
 jmp 0x0000:start
 
-
+AUX dw 0
+ARRAY_PRIMO dw 17,13,19,23,59,37,61,11
+TAM_ARRAY_PRIMO dw 8
 BALAS_X dw 100,200,300
 BALAS_Y dw 100,150,56
 BALA_X dw 100
@@ -214,12 +216,29 @@ mover_bala:
     mov ax, -10
     cmp [BALA_X], ax
     jg .finished
+
     mov ax, 340
     mov [BALA_X], ax
     call get_system_time
     mov ax,dx
-    mov bl,200
+    ;push dx
+    ;mov bx,[TAM_ARRAY_PRIMO]
+    ;xor bh,bh
+    ;div bl
+    ;xor al,al
+    ;mov bx,ax
+    ;add bx,bx
+    ;add bx, ARRAY_PRIMO
+    ;mov bx, [bx]
+    ;pop ax
+    mov bx , ARRAY_PRIMO
+    add bx,6
+    mov bx, [bx]
+    ;mov bx, [ARRAY_PRIMO+3*2]
+    mul bl
+    mov bl,190
     div bl
+    add ah,5
     mov [BALA_Y],ah
 
     .finished:
