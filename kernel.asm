@@ -1,12 +1,9 @@
 org 0x7e00
 jmp 0x0000:start
 
-BALA1_X dw 100
-BALA1_Y dw 100
-BALA2_X dw 150
-BALA2_Y dw 150
-BALA3_X dw 200
-BALA3_Y dw 56
+
+BALAS_X dw 100,200,300
+BALAS_Y dw 100,150,56
 BALA_X dw 100
 BALA_Y dw 100
 BALA_SIZE_X dw 07h
@@ -56,89 +53,89 @@ timer:
 
 
 atribui_mover_bala:
-    mov ax,[BALA1_X]
+    mov ax,[BALAS_X+0]
     mov [BALA_X],ax
-    mov ax, [BALA1_Y]
+    mov ax, [BALAS_Y+0]
     mov [BALA_Y],ax
 
     call mover_bala
 
     mov ax,[BALA_X]
-    mov [BALA1_X],ax
+    mov [BALAS_X+0],ax
     mov ax, [BALA_Y]
-    mov [BALA1_Y],ax
+    mov [BALAS_Y+0],ax
 
-    mov ax,[BALA2_X]
+    mov ax,[BALAS_X+1*2]
     mov [BALA_X],ax
-    mov ax, [BALA2_Y]
+    mov ax, [BALAS_Y+1*2]
     mov [BALA_Y],ax
 
     call mover_bala
 
     mov ax,[BALA_X]
-    mov [BALA2_X],ax
+    mov [BALAS_X+1*2],ax
     mov ax, [BALA_Y]
-    mov [BALA2_Y],ax
+    mov [BALAS_Y+1*2],ax
 
-    mov ax,[BALA3_X]
+    mov ax,[BALAS_X+2*2]
     mov [BALA_X],ax
-    mov ax, [BALA3_Y]
+    mov ax, [BALAS_Y+2*2]
     mov [BALA_Y],ax
 
     call mover_bala
 
     mov ax,[BALA_X]
-    mov [BALA3_X],ax
+    mov [BALAS_X+2*2],ax
     mov ax, [BALA_Y]
-    mov [BALA3_Y],ax
+    mov [BALAS_Y+2*2],ax
     
     ret
 
 atribui_draw_bala:
-    mov ax,[BALA1_X]
+    mov ax,[BALAS_X+0]
     mov [BALA_X],ax
-    mov ax, [BALA1_Y]
+    mov ax, [BALAS_Y+0]
     mov [BALA_Y],ax
 
     call draw_bala
 
-    mov ax,[BALA2_X]
+    mov ax,[BALAS_X+1*2]
     mov [BALA_X],ax
-    mov ax, [BALA2_Y]
+    mov ax, [BALAS_Y+1*2]
     mov [BALA_Y],ax
 
     call draw_bala
 
-    mov ax,[BALA3_X]
+    mov ax,[BALAS_X+2*2]
     mov [BALA_X],ax
-    mov ax, [BALA3_Y]
+    mov ax, [BALAS_Y+2*2]
     mov [BALA_Y],ax
 
     call draw_bala
 
     ret
 atribui_compara_colisao:
-    mov ax,[BALA1_X]
+    mov ax,[BALAS_X+0]
     mov [BALA_X],ax
-    mov ax, [BALA1_Y]
+    mov ax, [BALAS_Y+0]
     mov [BALA_Y],ax
 
     call compara_pos_X
     cmp byte [VAR_COLISAO], 1
     je .finished
 
-    mov ax,[BALA2_X]
+    mov ax,[BALAS_X+1*2]
     mov [BALA_X],ax
-    mov ax, [BALA2_Y]
+    mov ax, [BALAS_Y+1*2]
     mov [BALA_Y],ax
 
     call compara_pos_X
     cmp byte [VAR_COLISAO], 1
     je .finished
 
-    mov ax,[BALA3_X]
+    mov ax,[BALAS_X+2*2]
     mov [BALA_X],ax
-    mov ax, [BALA3_Y]
+    mov ax, [BALAS_Y+2*2]
     mov [BALA_Y],ax
 
     call compara_pos_X
