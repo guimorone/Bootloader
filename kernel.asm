@@ -1,21 +1,33 @@
 org 0x7e00
 jmp 0x0000:start
 
-AUX dw 0
-ARRAY_PRIMO dw 17,13,19,23,59,37,61,11
+COUNT dw 0  ; percorre array_primo
+ARRAY_PRIMO dw 17,313,421,173,59,37,73,197
 TAM_ARRAY_PRIMO dw 8
-BALAS_X dw 100,200,300
-BALAS_Y dw 100,150,56
-BALA_X dw 100
+
+BALAS_X dw 100,200,300,150,250
+BALAS_Y dw 100,150,56,150,25
+BALA_X dw 100                   ;POSICAO DAS BALAS
 BALA_Y dw 100
-BALA_SIZE_X dw 07h
+
+BALA_SIZE_X dw 07h              ;TAMANHO DAS BALAS
 BALA_SIZE_Y dw 03h
-BALA_VELX dw 05h
+BALA_SIZE_HORIZONTAL_X dw 07h
+BALA_SIZE_HORIZONTAL_Y dw 03h
+BALA_SIZE_VERTICAL_X dw 03h
+BALA_SIZE_VERTICAL_Y dw 07h
+
+BALAS_VELX dw 05h, 05h, -05h
+BALAS_VELY dw 05h, -05h
+BALA_VELX dw 05h                ;VELOCIDADE DAS BALAS 
+BALA_VELY dw 05h
+
 BALL_X dw 0Ah
 BALL_Y dw 0Ah
 BALL_SIZE dw 09h
 BALL_VELX dw 05h
-BALL_VELY dw 05h
+BALL_VELY dw 05h                ;BOLA CARACTERISTICAS
+
 TIME db 0
 VAR_COLISAO db 0
 
@@ -59,8 +71,10 @@ atribui_mover_bala:
     mov [BALA_X],ax
     mov ax, [BALAS_Y+0]
     mov [BALA_Y],ax
+    mov ax, [BALAS_VELX+0]
+    mov [BALA_VELX], ax
 
-    call mover_bala
+    call mover_bala_horizontal
 
     mov ax,[BALA_X]
     mov [BALAS_X+0],ax
@@ -71,8 +85,10 @@ atribui_mover_bala:
     mov [BALA_X],ax
     mov ax, [BALAS_Y+1*2]
     mov [BALA_Y],ax
+    mov ax, [BALAS_VELX+1*2]
+    mov [BALA_VELX], ax
 
-    call mover_bala
+    call mover_bala_horizontal
 
     mov ax,[BALA_X]
     mov [BALAS_X+1*2],ax
@@ -83,14 +99,44 @@ atribui_mover_bala:
     mov [BALA_X],ax
     mov ax, [BALAS_Y+2*2]
     mov [BALA_Y],ax
+    mov ax, [BALAS_VELX+2*2]
+    mov [BALA_VELX], ax
 
-    call mover_bala
+    call mover_bala_horizontal_neg
 
     mov ax,[BALA_X]
     mov [BALAS_X+2*2],ax
     mov ax, [BALA_Y]
     mov [BALAS_Y+2*2],ax
+
+    mov ax,[BALAS_X+3*2]
+    mov [BALA_X],ax
+    mov ax, [BALAS_Y+3*2]
+    mov [BALA_Y],ax
+    mov ax, [BALAS_VELY+0]
+    mov [BALA_VELY], ax
+
+    call mover_bala_vertical
+
+    mov ax,[BALA_X]
+    mov [BALAS_X+3*2],ax
+    mov ax, [BALA_Y]
+    mov [BALAS_Y+3*2],ax
     
+    mov ax,[BALAS_X+4*2]
+    mov [BALA_X],ax
+    mov ax, [BALAS_Y+4*2]
+    mov [BALA_Y],ax
+    mov ax, [BALAS_VELY+1*2]
+    mov [BALA_VELY], ax
+
+    call mover_bala_vertical_neg
+
+    mov ax,[BALA_X]
+    mov [BALAS_X+4*2],ax
+    mov ax, [BALA_Y]
+    mov [BALAS_Y+4*2],ax
+
     ret
 
 atribui_draw_bala:
@@ -98,6 +144,10 @@ atribui_draw_bala:
     mov [BALA_X],ax
     mov ax, [BALAS_Y+0]
     mov [BALA_Y],ax
+    mov ax, [BALA_SIZE_HORIZONTAL_X]
+    mov [BALA_SIZE_X], ax
+    mov ax, [BALA_SIZE_HORIZONTAL_Y]
+    mov [BALA_SIZE_Y], ax
 
     call draw_bala
 
@@ -105,6 +155,10 @@ atribui_draw_bala:
     mov [BALA_X],ax
     mov ax, [BALAS_Y+1*2]
     mov [BALA_Y],ax
+    mov ax, [BALA_SIZE_HORIZONTAL_X]
+    mov [BALA_SIZE_X], ax
+    mov ax, [BALA_SIZE_HORIZONTAL_Y]
+    mov [BALA_SIZE_Y], ax
 
     call draw_bala
 
@@ -112,10 +166,37 @@ atribui_draw_bala:
     mov [BALA_X],ax
     mov ax, [BALAS_Y+2*2]
     mov [BALA_Y],ax
+    mov ax, [BALA_SIZE_HORIZONTAL_X]
+    mov [BALA_SIZE_X], ax
+    mov ax, [BALA_SIZE_HORIZONTAL_Y]
+    mov [BALA_SIZE_Y], ax
+
+    call draw_bala
+
+    mov ax,[BALAS_X+3*2]
+    mov [BALA_X],ax
+    mov ax, [BALAS_Y+3*2]
+    mov [BALA_Y],ax
+    mov ax, [BALA_SIZE_VERTICAL_X]
+    mov [BALA_SIZE_X], ax
+    mov ax, [BALA_SIZE_VERTICAL_Y]
+    mov [BALA_SIZE_Y], ax
+
+    call draw_bala
+
+    mov ax,[BALAS_X+4*2]
+    mov [BALA_X],ax
+    mov ax, [BALAS_Y+4*2]
+    mov [BALA_Y],ax
+    mov ax, [BALA_SIZE_VERTICAL_X]
+    mov [BALA_SIZE_X], ax
+    mov ax, [BALA_SIZE_VERTICAL_Y]
+    mov [BALA_SIZE_Y], ax
 
     call draw_bala
 
     ret
+
 atribui_compara_colisao:
     mov ax,[BALAS_X+0]
     mov [BALA_X],ax
@@ -144,9 +225,27 @@ atribui_compara_colisao:
     cmp byte [VAR_COLISAO], 1
     je .finished
 
+    mov ax,[BALAS_X+3*2]
+    mov [BALA_X],ax
+    mov ax, [BALAS_Y+3*2]
+    mov [BALA_Y],ax
+
+    call compara_pos_X
+    cmp byte [VAR_COLISAO], 1
+    je .finished
+
+    mov ax,[BALAS_X+4*2]
+    mov [BALA_X],ax
+    mov ax, [BALAS_Y+4*2]
+    mov [BALA_Y],ax
+
+    call compara_pos_X
+    cmp byte [VAR_COLISAO], 1
+    je .finished
     
     .finished:
         ret
+
 compara_pos_X:
     mov ax, [BALL_X]
     add ax, [BALL_SIZE]
@@ -178,9 +277,19 @@ draw_bala:
     mov ax,0
     cmp [BALA_X],ax
     jng .naodesenha
+
     mov ax,310
     cmp [BALA_X],ax
     jg .naodesenha
+
+    mov ax, 0
+    cmp [BALA_Y], ax
+    jng .naodesenha
+
+    mov ax, 190
+    cmp [BALAS_Y], ax
+    jg .naodesenha
+    
     mov cx, [BALA_X]
     mov dx, [BALA_Y]
 
@@ -210,7 +319,7 @@ draw_bala_loop:
 
     ret
 
-mover_bala:
+mover_bala_horizontal:
     mov ax, [BALA_VELX]
     sub [BALA_X], ax
     mov ax, -10
@@ -219,22 +328,44 @@ mover_bala:
 
     mov ax, 340
     mov [BALA_X], ax
+
+    call compara_count
+
     call get_system_time
     mov ax,dx
-    ;push dx
-    ;mov bx,[TAM_ARRAY_PRIMO]
-    ;xor bh,bh
-    ;div bl
-    ;xor al,al
-    ;mov bx,ax
-    ;add bx,bx
-    ;add bx, ARRAY_PRIMO
-    ;mov bx, [bx]
-    ;pop ax
+
     mov bx , ARRAY_PRIMO
-    add bx,6
+    add bx, [COUNT]
     mov bx, [bx]
-    ;mov bx, [ARRAY_PRIMO+3*2]
+
+    mul bl
+    mov bl,190
+    div bl
+    add ah,40
+    mov [BALA_Y],ah
+
+    .finished:
+        ret
+
+mover_bala_horizontal_neg:
+    mov ax, [BALA_VELX]
+    sub [BALA_X], ax
+    mov ax, 340
+    cmp [BALA_X], ax
+    jl .finished
+
+    mov ax, -10
+    mov [BALA_X], ax
+
+    call compara_count
+
+    call get_system_time
+    mov ax,dx
+
+    mov bx , ARRAY_PRIMO
+    add bx, [COUNT]
+    mov bx, [bx]
+
     mul bl
     mov bl,190
     div bl
@@ -244,6 +375,73 @@ mover_bala:
     .finished:
         ret
 
+mover_bala_vertical:
+    mov ax, [BALA_VELY]
+    sub [BALA_Y], ax
+    mov ax, -10
+    cmp [BALA_Y], ax
+    jg .finished
+
+    mov ax, 220
+    mov [BALA_Y], ax
+
+    call compara_count
+
+    call get_system_time
+    mov ax,dx
+
+    mov bx , ARRAY_PRIMO
+    add bx, [COUNT]
+    mov bx, [bx]
+
+    mul bl
+    mov bl,190
+    div bl
+    add ah,5
+    mov [BALA_X],ah
+
+    .finished:
+        ret
+
+mover_bala_vertical_neg:
+    mov ax, [BALA_VELY]
+    sub [BALA_Y], ax
+    mov ax, 220
+    cmp [BALA_Y], ax
+    jl .finished
+
+    mov ax, -10
+    mov [BALA_Y], ax
+
+    call compara_count
+
+    call get_system_time
+    mov ax,dx
+
+    mov bx , ARRAY_PRIMO
+    add bx, [COUNT]
+    mov bx, [bx]
+
+    mul bl
+    mov bl,190
+    div bl
+    add ah,5
+    mov [BALA_X],ah
+
+    .finished:
+        ret
+
+compara_count:
+    inc dword [COUNT]
+    mov ax, 8
+    cmp [COUNT], ax
+    jl .finished
+
+    xor ax, ax
+    mov [COUNT], ax
+
+    .finished:
+        ret
 
 get_system_time:
     mov ah,00h
