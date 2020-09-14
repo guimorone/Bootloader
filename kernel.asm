@@ -5,6 +5,14 @@ COUNT dw 0  ; percorre array_primo
 ARRAY_PRIMO dw 17,313,421,173,59,37,73,197
 TAM_ARRAY_PRIMO dw 8
 
+jogar_string dw "JOGAR (1)", 0
+creditos_string dw "CREDITOS (2)", 0
+sair_string dw "SAIR (3)", 0
+
+CURSOR_X dw 0
+CURSOR_Y dw 0
+
+
 BALAS_X dw 100,200,300,150,250
 BALAS_Y dw 100,150,56,150,25
 BALA_X dw 100                   ;POSICAO DAS BALAS
@@ -25,13 +33,56 @@ BALA_VELY dw 05h
 BALL_X dw 0Ah
 BALL_Y dw 0Ah
 BALL_SIZE dw 09h
-BALL_VELX dw 05h
-BALL_VELY dw 05h                ;BOLA CARACTERISTICAS
+BALL_VELX dw 06h
+BALL_VELY dw 06h                ;BOLA CARACTERISTICAS
 
-TIME db 0
 VAR_COLISAO db 0
 
-timer:
+menu:
+    
+
+    mov si, jogar_string
+    mov dh, 0Bh
+    mov dl, 10h
+    call set_cursor
+    call print_string
+
+    mov si, creditos_string
+    mov dh, 0Dh
+    mov dl, 10h
+    call set_cursor
+    call print_string
+
+    mov si, sair_string
+    mov dh, 0Fh
+    mov dl, 10h
+    call set_cursor
+    call print_string
+
+    
+    call wait_char
+
+    cmp al, '1'
+    je jogar
+
+    cmp al, '2'
+    je creditos
+
+    cmp al, '3'
+    je .fim
+
+    jmp menu
+
+    .fim:
+        ret
+    
+
+
+creditos:
+    ret
+
+
+jogar:
     ;mov ah, 2Ch
     ;int 21h
 
@@ -61,9 +112,10 @@ timer:
     call atribui_compara_colisao
 
     cmp byte [VAR_COLISAO], 0
-    je timer
+    je jogar
 
-    ret
+    call clear_screen
+    jmp menu
 
 
 atribui_mover_bala:
@@ -287,9 +339,9 @@ draw_bala:
     jng .naodesenha
 
     mov ax, 190
-    cmp [BALAS_Y], ax
+    cmp [BALA_Y], ax
     jg .naodesenha
-    
+
     mov cx, [BALA_X]
     mov dx, [BALA_Y]
 
@@ -450,6 +502,24 @@ get_system_time:
     ret
 print_char:
     mov ah, 0eh
+    mov bl, 0Fh
+    int 10h
+
+    ret
+
+print_string:
+    lodsb       
+    cmp al, 0
+    je .end
+    call print_char
+    jmp print_string
+    
+    .end:
+        ret
+
+set_cursor:
+    mov ah, 02h
+    mov bh, 00h
     int 10h
 
     ret
@@ -583,13 +653,10 @@ start:
     mov ah, 00h
     mov al, 13h
     int 10h
-    
 
     call clear_screen
     
-    call timer
-    dale:
-    call clear_screen
+    call menu
 
     ret
 
