@@ -5,6 +5,12 @@ COUNT dw 0  ; percorre array_primo
 ARRAY_PRIMO dw 17,313,421,173,59,37,73,197
 TAM_ARRAY_PRIMO dw 8
 
+criadores_string dw "CRIADORES:", 0
+bilas_string dw "wssf (bilas)", 0
+braia_string dw "gma2 (braia)", 0
+labo_string dw "elm2 (labo)", 0
+press_esc dw "Pressione ESC para voltar ao menu", 0
+
 jogar_string dw "JOGAR (1)", 0
 creditos_string dw "CREDITOS (2)", 0
 sair_string dw "SAIR (3)", 0
@@ -12,6 +18,8 @@ sair_string dw "SAIR (3)", 0
 CURSOR_X dw 0
 CURSOR_Y dw 0
 
+pontuacao_string dw "PONTOS", 0
+GAME_TIME dw 0
 
 BALAS_X dw 100,200,300,150,250
 BALAS_Y dw 100,150,56,150,25
@@ -59,26 +67,75 @@ menu:
     call set_cursor
     call print_string
 
-    
+    mov ah, 0Ch        ;clear buffer
+    int 21h
+
     call wait_char
 
     cmp al, '1'
     je jogar
 
     cmp al, '2'
-    je creditos
+    je .ircreditos
 
     cmp al, '3'
     je .fim
 
     jmp menu
 
+    .ircreditos:
+        call clear_screen
+        jmp creditos
+
     .fim:
-        ret
+        call clear_screen
     
+    ret
 
 
 creditos:
+    
+    mov si, criadores_string
+    mov dh, 03h
+    mov dl, 0Fh
+    call set_cursor
+    call print_string
+
+    mov si, bilas_string
+    mov dh, 05h
+    mov dl, 0Eh
+    call set_cursor
+    call print_string
+
+    mov si, braia_string
+    mov dh, 07h
+    mov dl, 0Eh
+    call set_cursor
+    call print_string
+
+    mov si, labo_string
+    mov dh, 09h
+    mov dl, 0Eh
+    call set_cursor
+    call print_string
+
+    mov si, press_esc
+    mov dh, 13h
+    mov dl, 04h
+    call set_cursor
+    call print_string
+
+    call wait_char
+
+    cmp al, 27
+    je .irmenu
+
+    jmp creditos
+
+    .irmenu:
+        call clear_screen
+        jmp menu
+
     ret
 
 
@@ -90,7 +147,9 @@ jogar:
     mov dx, 30000         ;delay 
     mov ah, 86h           ;delay
     int 15h               ;delay
-
+    
+    ;inc word [GAME_TIME]
+ 
     mov ah, 0Ch
     int 21h
 
@@ -115,6 +174,10 @@ jogar:
     je jogar
 
     call clear_screen
+    mov byte [VAR_COLISAO], 0
+    mov word [BALL_X], 0Ah
+    mov word [BALL_Y], 0Ah
+    ;mov dword [BALL_SIZE], 09h
     jmp menu
 
 
@@ -484,7 +547,7 @@ mover_bala_vertical_neg:
         ret
 
 compara_count:
-    inc dword [COUNT]
+    inc word [COUNT]
     mov ax, 8
     cmp [COUNT], ax
     jl .finished
