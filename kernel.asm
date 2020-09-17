@@ -15,10 +15,11 @@ jogar_string dw "JOGAR (1)", 0
 creditos_string dw "CREDITOS (2)", 0
 sair_string dw "SAIR (3)", 0
 
+pontuacao dw "NEO, SUA PONTUACAO FOI:", 0
+
 CURSOR_X dw 0
 CURSOR_Y dw 0
 
-pontuacao_string dw "PONTOS", 0
 GAME_TIME dw 0
 
 BALAS_X dw 100,200,300,150,250
@@ -46,24 +47,39 @@ BALL_VELY dw 06h                ;BOLA CARACTERISTICAS
 
 VAR_COLISAO db 0
 
+jogador db 0, 0, 15, 15, 15, 15, 0, 0
+        db 0, 0, 15, 15, 15, 15, 0, 0
+        db 0, 0, 15, 15, 15, 15, 0, 0
+        db 0, 0, 15, 15, 15, 15, 0, 0
+        db 0, 0, 0, 15, 15, 0, 0, 0
+        db 0, 0, 0, 0, 15, 15, 0, 0
+        db 0, 0, 0, 0, 15, 0, 15, 0
+        db 0, 0, 0, 0, 15, 0, 0, 15
+        db 0, 0, 0, 15, 0, 15, 0, 0
+        db 0, 0, 15, 0, 0, 0, 15, 0
+        db 0, 15, 0, 0, 0, 0, 0, 15
+
+
+
+
 menu:
     
 
     mov si, jogar_string
     mov dh, 0Bh
-    mov dl, 10h
+    mov dl, 0eh
     call set_cursor
     call print_string
 
     mov si, creditos_string
     mov dh, 0Dh
-    mov dl, 10h
+    mov dl, 0eh
     call set_cursor
     call print_string
 
     mov si, sair_string
     mov dh, 0Fh
-    mov dl, 10h
+    mov dl, 0eh
     call set_cursor
     call print_string
 
@@ -148,7 +164,7 @@ jogar:
     mov ah, 86h           ;delay
     int 15h               ;delay
     
-    ;inc word [GAME_TIME]
+    inc word [GAME_TIME]
  
     mov ah, 0Ch
     int 21h
@@ -178,6 +194,74 @@ jogar:
     mov word [BALL_X], 0Ah
     mov word [BALL_Y], 0Ah
     ;mov dword [BALL_SIZE], 09h
+    jmp printa_pontuacao
+
+
+printa_pontuacao:
+
+    call clear_screen
+
+    xor dx, dx
+    mov ax, word [GAME_TIME]
+    mov bx, 10000
+    div bx
+    mov ax, dx
+    xor dx, dx
+    mov bx, 1000
+    div bx
+    add ax, 48
+    push dx
+    mov dh, 14h
+    mov dl, 1Dh
+    call set_cursor
+    call print_char
+    pop dx
+
+    mov ax, dx
+    mov bl, 100
+    div bl
+    add al, 48
+    push ax
+    mov dh, 14h
+    mov dl, 1Eh
+    call set_cursor
+    call print_char
+    pop ax
+
+    mov al, ah
+    xor ah, ah
+    mov bl, 10
+    div bl
+    add al, 48
+    push ax
+    mov dh, 14h
+    mov dl, 1Fh
+    call set_cursor
+    call print_char
+    pop ax
+
+    mov al, ah
+    add al, 48
+    mov dh, 14h
+    mov dl, 20h
+    call set_cursor
+    call print_char
+
+    mov word [GAME_TIME], 0
+
+    mov si, pontuacao
+    mov dh, 14h
+    mov dl, 05h
+    call set_cursor
+    call print_string
+
+    mov cx, 50             ;delay
+    mov dx, 30000         ;delay 
+    mov ah, 86h           ;delay
+    int 15h    
+
+    call clear_screen
+
     jmp menu
 
 
