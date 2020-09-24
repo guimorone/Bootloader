@@ -41,23 +41,25 @@ BALA_VELY dw 05h
 
 BALL_X dw 0Ah
 BALL_Y dw 0Ah
-BALL_SIZE dw 09h
+BALL_SIZE_X dw 07h
+BALL_SIZE_Y dw 0Ah
 BALL_VELX dw 06h
 BALL_VELY dw 06h                ;BOLA CARACTERISTICAS
 
 VAR_COLISAO db 0
 
-jogador db 0, 0, 15, 15, 15, 15, 0, 0
-        db 0, 0, 15, 15, 15, 15, 0, 0
-        db 0, 0, 15, 15, 15, 15, 0, 0
-        db 0, 0, 15, 15, 15, 15, 0, 0
-        db 0, 0, 0, 15, 15, 0, 0, 0
-        db 0, 0, 0, 0, 15, 15, 0, 0
-        db 0, 0, 0, 0, 15, 0, 15, 0
-        db 0, 0, 0, 0, 15, 0, 0, 15
-        db 0, 0, 0, 15, 0, 15, 0, 0
-        db 0, 0, 15, 0, 0, 0, 15, 0
-        db 0, 15, 0, 0, 0, 0, 0, 15
+jogador dw  1,  1, 15, 15, 15, 15,  1,  1,
+        dw  1,  1, 15, 15, 15, 15,  1,  1,
+        dw  1,  1, 15, 15, 15, 15,  1,  1,
+        dw  1,  1, 15, 15, 15, 15,  1,  1,
+        dw  1,  1,  1, 15, 15,  1,  1,  1,
+        dw  1,  1, 15, 15, 15, 15,  1,  1,
+        dw  1, 15,  1, 15, 15,  1, 15,  1,
+        dw 15,  1,  1, 15, 15,  1,  1, 15,
+        dw  1,  1,  1, 15, 15,  1,  1,  1,
+        dw  1,  1, 15,  1,  1, 15,  1,  1,
+        dw  1, 15,  1,  1,  1,  1, 15,  1,
+
 
 
 
@@ -447,7 +449,7 @@ atribui_compara_colisao:
 
 compara_pos_X:
     mov ax, [BALL_X]
-    add ax, [BALL_SIZE]
+    add ax, [BALL_SIZE_X]
     cmp ax, [BALA_X]
     jg .compara_pos_X2
     ret
@@ -459,7 +461,7 @@ compara_pos_X:
 
 compara_pos_Y:
     mov ax, [BALL_Y]
-    add ax, [BALL_SIZE]
+    add ax, [BALL_SIZE_Y]
     cmp ax, [BALA_Y]
     jg .compara_pos_Y2
     ret
@@ -704,11 +706,11 @@ move_ball_down:
     add [BALL_Y], ax
 
     mov ax, 198
-    sub ax, [BALL_SIZE]
+    sub ax, [BALL_SIZE_Y]
     cmp [BALL_Y], ax
     jng .finished
     mov ax, 198
-    sub ax, [BALL_SIZE]
+    sub ax, [BALL_SIZE_Y]
     mov [BALL_Y], ax
 
     .finished:
@@ -732,11 +734,11 @@ move_ball_right:
     add [BALL_X], ax
 
     mov ax, 318
-    sub ax, [BALL_SIZE]
+    sub ax, [BALL_SIZE_X]
     cmp [BALL_X], ax
     jng .finished
     mov ax, 318
-    sub ax, [BALL_SIZE]
+    sub ax, [BALL_SIZE_X]
     mov [BALL_X], ax
 
     .finished:
@@ -774,23 +776,44 @@ draw_ball:
     ret
 
 draw_ball_loop:
+
+    mov ax,cx
+    sub ax, [BALL_X]
+    mov bx,dx
+    sub bx,[BALL_Y]
+
+    add bx,bx
+    add bx,bx
+    add bx,bx
+    add bx,bx
+    
+
+    add ax,ax
+    add ax,jogador
+    add ax,bx
+    mov bx,[eax]
+    cmp bx,1
+    je .skip_draw
+    
     xor ax, ax
     mov ah, 0Ch
     mov al, 0Fh
     mov bh, 00h
     int 10h
 
+    .skip_draw:
+
     inc cx
     mov ax, cx
     sub ax, [BALL_X]
-    cmp ax, [BALL_SIZE]
+    cmp ax, [BALL_SIZE_X]
     jng draw_ball_loop
 
     mov cx, [BALL_X]
     inc dx
     mov ax, dx
     sub ax, [BALL_Y]
-    cmp ax, [BALL_SIZE]
+    cmp ax, [BALL_SIZE_Y]
     jng draw_ball_loop
     
     ret
