@@ -5,6 +5,8 @@ COUNT dw 0  ; percorre array_primo
 ARRAY_PRIMO dw 17,313,421,173,59,37,73,197
 TAM_ARRAY_PRIMO dw 8
 
+nome_string dw "DESVIO SIMULATOR",0
+
 criadores_string dw "CRIADORES:", 0
 bilas_string dw "wssf (bilas)", 0
 braia_string dw "gma2 (braia)", 0
@@ -30,8 +32,8 @@ BALA_Y dw 100
 BALA_SIZE_X dw 07h              ;TAMANHO DAS BALAS
 BALA_SIZE_Y dw 03h
 BALA_SIZE_HORIZONTAL_X dw 07h
-BALA_SIZE_HORIZONTAL_Y dw 03h
-BALA_SIZE_VERTICAL_X dw 03h
+BALA_SIZE_HORIZONTAL_Y dw 02h
+BALA_SIZE_VERTICAL_X dw 02h
 BALA_SIZE_VERTICAL_Y dw 07h
 
 BALAS_VELX dw 05h, 05h, -05h
@@ -41,30 +43,39 @@ BALA_VELY dw 05h
 
 BALL_X dw 0Ah
 BALL_Y dw 0Ah
-BALL_SIZE_X dw 07h
-BALL_SIZE_Y dw 0Ah
+BALL_SIZE_X dw 0Ah
+BALL_SIZE_Y dw 0dh
 BALL_VELX dw 06h
 BALL_VELY dw 06h                ;BOLA CARACTERISTICAS
 
 VAR_COLISAO db 0
 
-jogador dw  1,  1, 15, 15, 15, 15,  1,  1,
-        dw  1,  1, 15, 15, 15, 15,  1,  1,
-        dw  1,  1, 15, 15, 15, 15,  1,  1,
-        dw  1,  1, 15, 15, 15, 15,  1,  1,
-        dw  1,  1,  1, 15, 15,  1,  1,  1,
-        dw  1,  1, 15, 15, 15, 15,  1,  1,
-        dw  1, 15,  1, 15, 15,  1, 15,  1,
-        dw 15,  1,  1, 15, 15,  1,  1, 15,
-        dw  1,  1,  1, 15, 15,  1,  1,  1,
-        dw  1,  1, 15,  1,  1, 15,  1,  1,
-        dw  1, 15,  1,  1,  1,  1, 15,  1,
+jogador dw  1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+        dw  1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1,
+        dw  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        dw  1, 5, 1, 1, 1, 5, 1, 1, 1, 5, 1,
+        dw  1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1, 
+        dw  1, 1, 1, 5, 5, 5, 5, 5, 1, 1, 1, 
+        dw  1, 1, 5, 5, 5, 5, 5, 5, 5, 1, 1, 
+        dw  1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1, 
+        dw  1, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1, 
+        dw  5, 5, 1, 5, 5, 5, 5, 5, 1, 5, 5, 
+        dw  5, 1, 1, 5, 5, 5, 5, 5, 1, 1, 5, 
+        dw  1, 1, 1, 5, 5, 1, 5, 5, 1, 1, 1, 
+        dw  1, 1, 5, 5, 1, 1, 1, 5, 5, 1, 1, 
+        dw  1, 1, 5, 5, 1, 1, 1, 5, 5, 1, 1, 
 
 
 
 
 
 menu:
+
+    mov si, nome_string
+    mov dh, 05h
+    mov dl, 0ch
+    call set_cursor
+    call print_string
     
 
     mov si, jogar_string
@@ -782,11 +793,21 @@ draw_ball_loop:
     mov bx,dx
     sub bx,[BALL_Y]
 
-    add bx,bx
-    add bx,bx
-    add bx,bx
-    add bx,bx
+    push ax
+    push dx
+    push cx
+
+    mov ax,bx
+
+    mov bl,[BALL_SIZE_X]
+    add bl,1
+    add bl,bl
+    mul bl
+    mov bx,ax
     
+    pop cx
+    pop dx
+    pop ax
 
     add ax,ax
     add ax,jogador
