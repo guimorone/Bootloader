@@ -199,6 +199,9 @@ jogar:
 
     call atribui_compara_colisao
 
+    mov ah, 0Ch
+    int 21h
+
     cmp byte [VAR_COLISAO], 0
     je jogar
 
